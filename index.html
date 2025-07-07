@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Selection App</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Room Selection App - Choose participants for group activities and rooms. Select room size and participants with Google Sheets integration.">
+    <meta name="keywords" content="room selection, group activities, participant selection, team organization, room assignment">
+    <meta name="author" content="Room Selection App">
+    
+    <!-- Open Graph / Social Media Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Room Selection App">
+    <meta property="og:description" content="Easy-to-use app for selecting room participants and organizing group activities">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/667eea/ffffff?text=Room+Selection+App">
+    
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Room Selection App">
+    <meta name="twitter:description" content="Easy-to-use app for selecting room participants and organizing group activities">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Room Selection App</h1>
+            <p>Choose your room size and select participants</p>
+        </header>
+
+        <main>
+            <!-- Step 1: Room Size Selection -->
+            <section class="step" id="room-size-step">
+                <h2>Step 1: Select Room Size</h2>
+                <div class="room-size-options">
+                    <button class="room-btn" data-size="2">
+                        <span class="room-icon">🏠</span>
+                        <span class="room-text">2 People</span>
+                    </button>
+                    <button class="room-btn" data-size="3">
+                        <span class="room-icon">🏡</span>
+                        <span class="room-text">3 People</span>
+                    </button>
+                    <button class="room-btn" data-size="4">
+                        <span class="room-icon">🏘️</span>
+                        <span class="room-text">4 People</span>
+                    </button>
+                    <button class="room-btn" data-size="5">
+                        <span class="room-icon">🏢</span>
+                        <span class="room-text">5 People</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Step 2: Name Selection -->
+            <section class="step hidden" id="name-selection-step">
+                <h2>Step 2: Select Participants</h2>
+                <div class="selection-info">
+                    <p>Select <span id="required-count">0</span> people for your room</p>
+                    <p class="selection-counter">Selected: <span id="selected-count">0</span></p>
+                </div>
+                
+                <div class="name-grid" id="name-grid">
+                    <!-- Names will be populated by JavaScript -->
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="back-btn">← Back</button>
+                    <button class="btn btn-primary" id="submit-btn" disabled>Submit Selection</button>
+                </div>
+            </section>
+
+            <!-- Success Message -->
+            <section class="step hidden" id="success-step">
+                <div class="success-message">
+                    <div class="success-icon">✅</div>
+                    <h2>Success!</h2>
+                    <p>Your room selection has been submitted successfully.</p>
+                    <div class="selection-summary" id="selection-summary">
+                        <!-- Summary will be populated by JavaScript -->
+                    </div>
+                    <button class="btn btn-primary" id="new-selection-btn">Make New Selection</button>
+                </div>
+            </section>
+
+            <!-- Confirmation Dialog -->
+            <section class="confirmation-dialog hidden" id="confirmation-dialog">
+                <div class="confirmation-content">
+                    <h2>Confirm Your Selection</h2>
+                    <p>Please review your selection before submitting:</p>
+                    
+                    <div class="confirmation-details">
+                        <div class="detail-item">
+                            <strong>Room Size:</strong> <span id="confirm-room-size">0</span> people
+                        </div>
+                        <div class="detail-item">
+                            <strong>Selected Participants:</strong>
+                            <ul id="confirm-participants">
+                                <!-- Participants will be populated by JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="confirmation-buttons">
+                        <button class="btn btn-secondary" id="cancel-submit-btn">Cancel</button>
+                        <button class="btn btn-primary" id="confirm-submit-btn">Confirm & Submit</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Spinner -->
+            <div class="loading hidden" id="loading">
+                <div class="spinner"></div>
+                <p>Submitting your selection...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message hidden" id="error-message">
+                <div class="error-icon">❌</div>
+                <p id="error-text">Something went wrong. Please try again.</p>
+                <button class="btn btn-secondary" id="retry-btn">Try Again</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
