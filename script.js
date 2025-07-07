@@ -48,6 +48,16 @@ class RoomSelectionApp {
         this.loadUsedNames();
         this.loadRoomUsage();
         this.updateRoomAvailability();
+        this.ensureDialogsHidden();
+    }
+
+    ensureDialogsHidden() {
+        // Ensure all dialogs start hidden
+        document.getElementById('confirmation-dialog').classList.add('hidden');
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error-message').classList.add('hidden');
+        document.getElementById('success-step').classList.add('hidden');
+        document.getElementById('name-selection-step').classList.add('hidden');
     }
 
     bindEvents() {
@@ -75,6 +85,23 @@ class RoomSelectionApp {
 
         document.getElementById('cancel-submit-btn').addEventListener('click', () => {
             this.hideConfirmationDialog();
+        });
+
+        // Close confirmation dialog when clicking outside
+        document.getElementById('confirmation-dialog').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('confirmation-dialog')) {
+                this.hideConfirmationDialog();
+            }
+        });
+
+        // Close confirmation dialog with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const confirmationDialog = document.getElementById('confirmation-dialog');
+                if (confirmationDialog && !confirmationDialog.classList.contains('hidden')) {
+                    this.hideConfirmationDialog();
+                }
+            }
         });
 
         // New selection button
@@ -196,16 +223,25 @@ class RoomSelectionApp {
 
     showConfirmationDialog() {
         // Populate confirmation details
-        document.getElementById('confirm-room-size').textContent = this.selectedRoomSize;
-        document.getElementById('confirm-participants').innerHTML = 
-            this.selectedNames.map(name => `<li>• ${name}</li>`).join('');
+        const confirmRoomSize = document.getElementById('confirm-room-size');
+        const confirmParticipants = document.getElementById('confirm-participants');
+        const confirmationDialog = document.getElementById('confirmation-dialog');
         
-        // Show confirmation dialog
-        document.getElementById('confirmation-dialog').classList.remove('hidden');
+        if (confirmRoomSize && confirmParticipants && confirmationDialog) {
+            confirmRoomSize.textContent = this.selectedRoomSize;
+            confirmParticipants.innerHTML = 
+                this.selectedNames.map(name => `<li>• ${name}</li>`).join('');
+            
+            // Show confirmation dialog
+            confirmationDialog.classList.remove('hidden');
+        }
     }
 
     hideConfirmationDialog() {
-        document.getElementById('confirmation-dialog').classList.add('hidden');
+        const confirmationDialog = document.getElementById('confirmation-dialog');
+        if (confirmationDialog) {
+            confirmationDialog.classList.add('hidden');
+        }
     }
 
     updateRoomAvailability() {
