@@ -34,10 +34,9 @@ class RoomSelectionApp {
         // Google Sheets configuration
         this.googleSheetsConfig = {
             // Replace with your Google Apps Script Web App URL
-            scriptUrl: 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE',
-            // Alternative: Use Google Sheets API with a public sheet
-            // For demo purposes, we'll use a mock API endpoint
-            apiUrl: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
+            scriptUrl: 'https://script.google.com/macros/s/AKfycbzmomiyYY0vDZ41Vp4OJXPYA201tzjKF0F_TwnMAcix8GNU3xOSKpbFSvznbM6MlqUc/exec',
+            // Set to true to enable real Google Sheets integration
+            enabled: true // Change to true after setting up Google Apps Script
         };
 
         this.init();
@@ -275,41 +274,40 @@ class RoomSelectionApp {
 
     async loadRoomUsage() {
         try {
-            // For demonstration, simulate some used rooms
-            // In production, this would fetch from Google Sheets
-            const mockUsage = {
-                2: 3, // 3 rooms of 2 people already used
-                3: 2, // 2 rooms of 3 people already used
-                4: 1, // 1 room of 4 people already used
-                5: 0  // 0 rooms of 5 people already used
-            };
-            
-            Object.keys(mockUsage).forEach(size => {
-                this.roomLimits[size].used = mockUsage[size];
-            });
+            if (this.googleSheetsConfig.enabled) {
+                // Real Google Sheets implementation
+                const response = await fetch(this.googleSheetsConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'getRoomUsage'
+                    })
+                });
 
-            /*
-            // Actual Google Sheets implementation would look like this:
-            const response = await fetch(this.googleSheetsConfig.scriptUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'getRoomUsage'
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.success) {
-                    Object.keys(data.roomUsage).forEach(size => {
-                        this.roomLimits[size].used = data.roomUsage[size];
-                    });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        Object.keys(data.roomUsage).forEach(size => {
+                            this.roomLimits[size].used = data.roomUsage[size];
+                        });
+                    }
                 }
+            } else {
+                // Mock room usage for testing
+                const mockUsage = {
+                    2: 3, // 3 rooms of 2 people already used
+                    3: 2, // 2 rooms of 3 people already used
+                    4: 1, // 1 room of 4 people already used
+                    5: 0  // 0 rooms of 5 people already used
+                };
+                
+                Object.keys(mockUsage).forEach(size => {
+                    this.roomLimits[size].used = mockUsage[size];
+                });
             }
-            */
         } catch (error) {
             console.error('Error loading room usage:', error);
         }
@@ -353,57 +351,8 @@ class RoomSelectionApp {
     }
 
     async submitToGoogleSheets(data) {
-        // For demonstration, we'll use a mock API call
-        // In production, replace this with your actual Google Sheets API endpoint
-        
-        // Mock API call (replace with actual implementation)
-        const response = await fetch('https://httpbin.org/post', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        return await response.json();
-
-        /* 
-        // Actual Google Sheets implementation would look like this:
-        const response = await fetch(this.googleSheetsConfig.scriptUrl, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'addSubmission',
-                data: data
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to submit to Google Sheets');
-        }
-
-        return await response.json();
-        */
-    }
-
-    async loadUsedNames() {
-        try {
-            // For demonstration, we'll simulate loading used names
-            // In production, this would fetch from Google Sheets
-            
-            // Mock used names (replace with actual implementation)
-            const mockUsedNames = ['Alice Johnson', 'Bob Smith', 'Charlie Brown'];
-            this.usedNames = new Set(mockUsedNames);
-
-            /*
-            // Actual Google Sheets implementation would look like this:
+        if (this.googleSheetsConfig.enabled) {
+            // Real Google Sheets implementation
             const response = await fetch(this.googleSheetsConfig.scriptUrl, {
                 method: 'POST',
                 mode: 'cors',
@@ -411,15 +360,58 @@ class RoomSelectionApp {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    action: 'getUsedNames'
+                    action: 'addSubmission',
+                    data: data
                 })
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                this.usedNames = new Set(data.usedNames || []);
+            if (!response.ok) {
+                throw new Error('Failed to submit to Google Sheets');
             }
-            */
+
+            return await response.json();
+        } else {
+            // Mock API call for testing (remove this when ready)
+            const response = await fetch('https://httpbin.org/post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            return await response.json();
+        }
+    }
+
+    async loadUsedNames() {
+        try {
+            if (this.googleSheetsConfig.enabled) {
+                // Real Google Sheets implementation
+                const response = await fetch(this.googleSheetsConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'getUsedNames'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    this.usedNames = new Set(data.usedNames || []);
+                }
+            } else {
+                // Mock used names for testing
+                const mockUsedNames = ['Emma Thompson', 'Liam Anderson', 'Olivia Martinez'];
+                this.usedNames = new Set(mockUsedNames);
+            }
         } catch (error) {
             console.error('Error loading used names:', error);
             // Continue with empty used names set
