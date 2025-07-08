@@ -136,10 +136,14 @@ class RoomSelectionApp {
     }
 
     showNameSelection() {
-        document.getElementById('room-size-step').classList.add('hidden');
-        document.getElementById('name-selection-step').classList.remove('hidden');
+        const roomSizeStep = document.getElementById('room-size-step');
+        const nameSelectionStep = document.getElementById('name-selection-step');
+        const requiredCount = document.getElementById('required-count');
         
-        document.getElementById('required-count').textContent = this.selectedRoomSize;
+        if (roomSizeStep) roomSizeStep.classList.add('hidden');
+        if (nameSelectionStep) nameSelectionStep.classList.remove('hidden');
+        if (requiredCount) requiredCount.textContent = this.selectedRoomSize;
+        
         this.renderNameGrid();
         this.updateSelectionCounter();
     }
@@ -188,12 +192,17 @@ class RoomSelectionApp {
     }
 
     updateSelectionCounter() {
-        document.getElementById('selected-count').textContent = this.selectedNames.length;
+        const selectedCountElement = document.getElementById('selected-count');
+        if (selectedCountElement) {
+            selectedCountElement.textContent = this.selectedNames.length;
+        }
     }
 
     updateSubmitButton() {
         const submitBtn = document.getElementById('submit-btn');
-        submitBtn.disabled = this.selectedNames.length !== this.selectedRoomSize;
+        if (submitBtn) {
+            submitBtn.disabled = this.selectedNames.length !== this.selectedRoomSize;
+        }
     }
 
     showTemporaryMessage(message) {
@@ -315,8 +324,11 @@ class RoomSelectionApp {
 
     goBack() {
         this.selectedNames = [];
-        document.getElementById('name-selection-step').classList.add('hidden');
-        document.getElementById('room-size-step').classList.remove('hidden');
+        const nameSelectionStep = document.getElementById('name-selection-step');
+        const roomSizeStep = document.getElementById('room-size-step');
+        
+        if (nameSelectionStep) nameSelectionStep.classList.add('hidden');
+        if (roomSizeStep) roomSizeStep.classList.remove('hidden');
     }
 
     async submitSelection() {
@@ -353,23 +365,33 @@ class RoomSelectionApp {
     async submitToGoogleSheets(data) {
         if (this.googleSheetsConfig.enabled) {
             // Real Google Sheets implementation
-            const response = await fetch(this.googleSheetsConfig.scriptUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'addSubmission',
-                    data: data
-                })
-            });
+            try {
+                const response = await fetch(this.googleSheetsConfig.scriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'addSubmission',
+                        data: data
+                    })
+                });
 
-            if (!response.ok) {
-                throw new Error('Failed to submit to Google Sheets');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+
+                return result;
+            } catch (fetchError) {
+                console.error('Google Sheets API Error:', fetchError);
+                throw new Error('Failed to submit to Google Sheets: ' + fetchError.message);
             }
-
-            return await response.json();
         } else {
             // Mock API call for testing (remove this when ready)
             const response = await fetch('https://httpbin.org/post', {
@@ -419,7 +441,7 @@ class RoomSelectionApp {
     }
 
     generateSubmissionId() {
-        return 'sub_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        return 'sub_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
     }
 
     showLoading() {
