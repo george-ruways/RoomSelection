@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Selection App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Admin Access Button -->
+        <div class="admin-access">
+            <button id="adminBtn" class="admin-btn">🔑 Admin</button>
+        </div>
+
+        <header>
+            <h1>Room Selection App</h1>
+            <p>Select your room size and choose team members</p>
+        </header>
+
+        <!-- Room Size Selection Screen -->
+        <div id="roomSizeScreen" class="screen active">
+            <h2>Select Room Size</h2>
+            <div class="room-options">
+                <button class="room-btn" data-size="2">
+                    <span class="room-number">2</span>
+                    <span class="room-label">People</span>
+                    <span class="room-available" id="available-2">Available: 0</span>
+                </button>
+                <button class="room-btn" data-size="3">
+                    <span class="room-number">3</span>
+                    <span class="room-label">People</span>
+                    <span class="room-available" id="available-3">Available: 0</span>
+                </button>
+                <button class="room-btn" data-size="4">
+                    <span class="room-number">4</span>
+                    <span class="room-label">People</span>
+                    <span class="room-available" id="available-4">Available: 0</span>
+                </button>
+                <button class="room-btn" data-size="5">
+                    <span class="room-number">5</span>
+                    <span class="room-label">People</span>
+                    <span class="room-available" id="available-5">Available: 0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Name Selection Screen -->
+        <div id="nameSelectionScreen" class="screen">
+            <div class="selection-header">
+                <h2 id="selectionTitle">Select People</h2>
+                <button id="backBtn" class="back-btn">← Back</button>
+            </div>
+            
+            <div class="selection-info">
+                <p id="selectionCount">Selected: 0/0</p>
+            </div>
+
+            <div id="namesGrid" class="names-grid">
+                <!-- Names will be populated by JavaScript -->
+            </div>
+
+            <div class="action-buttons">
+                <button id="submitBtn" class="submit-btn" disabled>Submit Selection</button>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div id="successScreen" class="screen">
+            <div class="success-content">
+                <div class="success-icon">✓</div>
+                <h2>Room Reserved Successfully!</h2>
+                <p id="successMessage"></p>
+                <p id="reservationId"></p>
+                <button id="newSelectionBtn" class="primary-btn">Make Another Selection</button>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Screen -->
+        <div id="adminScreen" class="screen">
+            <div class="admin-header">
+                <h2>🛠️ Admin Dashboard</h2>
+                <button id="exitAdminBtn" class="exit-admin-btn">Exit Admin</button>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="settings">Settings</button>
+                <button class="tab-btn" data-tab="submissions">Submissions</button>
+                <button class="tab-btn" data-tab="names">Manage Names</button>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="tab-content active">
+                <h3>Room Availability Settings</h3>
+                <div class="room-settings">
+                    <div class="setting-item">
+                        <label>2 People Rooms:</label>
+                        <input type="number" id="rooms-2" min="0" max="50" value="0">
+                        <button onclick="updateRoomLimit(2)">Update</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>3 People Rooms:</label>
+                        <input type="number" id="rooms-3" min="0" max="50" value="0">
+                        <button onclick="updateRoomLimit(3)">Update</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>4 People Rooms:</label>
+                        <input type="number" id="rooms-4" min="0" max="50" value="0">
+                        <button onclick="updateRoomLimit(4)">Update</button>
+                    </div>
+                    <div class="setting-item">
+                        <label>5 People Rooms:</label>
+                        <input type="number" id="rooms-5" min="0" max="50" value="0">
+                        <button onclick="updateRoomLimit(5)">Update</button>
+                    </div>
+                </div>
+
+                <h3>Data Management</h3>
+                <div class="data-actions">
+                    <button id="refreshDataBtn" class="action-btn">🔄 Refresh All Data</button>
+                    <button id="resetAllBtn" class="action-btn danger">🗑️ Reset All Data</button>
+                </div>
+            </div>
+
+            <!-- Submissions Tab -->
+            <div id="submissionsTab" class="tab-content">
+                <div class="submissions-header">
+                    <h3>Room Submissions</h3>
+                    <button id="downloadBtn" class="download-btn">📥 Download Excel</button>
+                </div>
+                <div id="submissionsTable" class="submissions-table">
+                    <!-- Table will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Names Management Tab -->
+            <div id="namesTab" class="tab-content">
+                <h3>Manage Available Names</h3>
+                <div class="names-actions">
+                    <button id="uploadNamesBtn" class="action-btn">📤 Upload Names from Excel</button>
+                    <input type="file" id="namesFileInput" accept=".xlsx,.csv" style="display: none;">
+                </div>
+                <div class="names-list">
+                    <h4>Current Names:</h4>
+                    <div id="currentNamesList" class="current-names">
+                        <!-- Names will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingText">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content">
+                <h3>Confirm Your Selection</h3>
+                <p id="confirmationText"></p>
+                <div class="modal-buttons">
+                    <button id="confirmYes" class="confirm-btn">Yes, Submit</button>
+                    <button id="confirmNo" class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div id="adminLoginModal" class="modal">
+            <div class="modal-content">
+                <h3>🔐 Admin Login</h3>
+                <div class="login-form">
+                    <label for="adminPassword">Password:</label>
+                    <input type="password" id="adminPassword" placeholder="Enter admin password">
+                </div>
+                <div class="modal-buttons">
+                    <button id="loginBtn" class="confirm-btn">Login</button>
+                    <button id="cancelLoginBtn" class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h3>⚠️ Confirm Deletion</h3>
+                <p id="deleteText"></p>
+                <div class="modal-buttons">
+                    <button id="confirmDelete" class="confirm-btn danger">Delete</button>
+                    <button id="cancelDelete" class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div id="errorModal" class="modal">
+            <div class="modal-content">
+                <h3>❌ Error</h3>
+                <p id="errorText"></p>
+                <div class="modal-buttons">
+                    <button id="errorOk" class="primary-btn">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="modal">
+            <div class="modal-content">
+                <h3>✅ Success</h3>
+                <p id="successModalText"></p>
+                <div class="modal-buttons">
+                    <button id="successOk" class="primary-btn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
