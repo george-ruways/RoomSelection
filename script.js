@@ -42,12 +42,14 @@ class RoomSelectionApp {
         this.init();
     }
 
-    init() {
+    async init() {
         this.bindEvents();
-        this.loadUsedNames();
-        this.loadRoomUsage();
-        this.updateRoomAvailability();
         this.ensureDialogsHidden();
+        
+        // Load data before updating UI
+        await this.loadUsedNames();
+        await this.loadRoomUsage();
+        this.updateRoomAvailability();
     }
 
     ensureDialogsHidden() {
@@ -136,9 +138,17 @@ class RoomSelectionApp {
     }
 
     showNameSelection() {
+        console.log('showNameSelection called with room size:', this.selectedRoomSize);
+        
         const roomSizeStep = document.getElementById('room-size-step');
         const nameSelectionStep = document.getElementById('name-selection-step');
         const requiredCount = document.getElementById('required-count');
+        
+        console.log('Elements found:', {
+            roomSizeStep: !!roomSizeStep,
+            nameSelectionStep: !!nameSelectionStep,
+            requiredCount: !!requiredCount
+        });
         
         if (roomSizeStep) roomSizeStep.classList.add('hidden');
         if (nameSelectionStep) nameSelectionStep.classList.remove('hidden');
@@ -150,7 +160,16 @@ class RoomSelectionApp {
 
     renderNameGrid() {
         const nameGrid = document.getElementById('name-grid');
+        
+        if (!nameGrid) {
+            console.error('Name grid element not found!');
+            return;
+        }
+        
         nameGrid.innerHTML = '';
+        
+        console.log('Rendering names:', this.availableNames.length, 'names available');
+        console.log('Used names:', Array.from(this.usedNames));
 
         this.availableNames.forEach(name => {
             const nameElement = document.createElement('div');
@@ -169,6 +188,8 @@ class RoomSelectionApp {
 
             nameGrid.appendChild(nameElement);
         });
+        
+        console.log('Names rendered:', nameGrid.children.length, 'elements added');
     }
 
     toggleNameSelection(name, element) {
