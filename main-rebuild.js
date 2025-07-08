@@ -5,7 +5,7 @@ console.log('🚀 Room Selection App with Admin Dashboard Starting...');
 const CONFIG = {
     // Google Sheets integration - ALWAYS enabled for production
     USE_GOOGLE_SHEETS: true,
-    GOOGLE_SHEETS_URL: 'https://script.google.com/macros/s/AKfycbzmomiyYY0vDZ41Vp4OJXPYA201tzjKF0F_TwnMAcix8GNU3xOSKpbFSvznbM6MlqUc/exec',
+    GOOGLE_SHEETS_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
     
     // Admin password
     ADMIN_PASSWORD: 'S7s@210704',
