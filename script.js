@@ -233,6 +233,7 @@ class RoomSelectionApp {
                 this.selectedNames.map(name => `<li>• ${name}</li>`).join('');
             
             // Show confirmation dialog
+            confirmationDialog.style.display = ''; // Remove inline style
             confirmationDialog.classList.remove('hidden');
         }
     }
@@ -241,6 +242,7 @@ class RoomSelectionApp {
         const confirmationDialog = document.getElementById('confirmation-dialog');
         if (confirmationDialog) {
             confirmationDialog.classList.add('hidden');
+            confirmationDialog.style.display = 'none'; // Extra safety
         }
     }
 
@@ -482,6 +484,24 @@ class RoomSelectionApp {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Force hide all dialogs immediately when page loads
+    const elementsToHide = [
+        'confirmation-dialog',
+        'loading', 
+        'error-message',
+        'success-step',
+        'name-selection-step'
+    ];
+    
+    elementsToHide.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.classList.add('hidden');
+            element.style.display = 'none'; // Extra safety
+        }
+    });
+    
+    // Initialize the app
     new RoomSelectionApp();
 });
 

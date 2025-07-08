@@ -51,7 +51,7 @@ header p {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 /* Room Size Selection */
@@ -268,10 +268,16 @@ header p {
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .confirmation-dialog.hidden {
-    display: none;
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .confirmation-content {
