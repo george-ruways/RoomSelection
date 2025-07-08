@@ -43,8 +43,8 @@ class RoomSelectionApp {
     }
 
     async init() {
-        this.bindEvents();
         this.ensureDialogsHidden();
+        this.bindEvents();
         
         // Load data before updating UI
         await this.loadUsedNames();
@@ -150,8 +150,15 @@ class RoomSelectionApp {
             requiredCount: !!requiredCount
         });
         
-        if (roomSizeStep) roomSizeStep.classList.add('hidden');
-        if (nameSelectionStep) nameSelectionStep.classList.remove('hidden');
+        if (roomSizeStep) {
+            roomSizeStep.classList.add('hidden');
+            roomSizeStep.style.display = '';
+        }
+        if (nameSelectionStep) {
+            nameSelectionStep.classList.remove('hidden');
+            nameSelectionStep.style.display = ''; // Remove any inline style
+            console.log('Name selection step display:', window.getComputedStyle(nameSelectionStep).display);
+        }
         if (requiredCount) requiredCount.textContent = this.selectedRoomSize;
         
         this.renderNameGrid();
@@ -170,6 +177,11 @@ class RoomSelectionApp {
         
         console.log('Rendering names:', this.availableNames.length, 'names available');
         console.log('Used names:', Array.from(this.usedNames));
+        console.log('Name grid computed styles:', {
+            display: window.getComputedStyle(nameGrid).display,
+            gridTemplateColumns: window.getComputedStyle(nameGrid).gridTemplateColumns,
+            visibility: window.getComputedStyle(nameGrid).visibility
+        });
 
         this.availableNames.forEach(name => {
             const nameElement = document.createElement('div');
@@ -190,6 +202,7 @@ class RoomSelectionApp {
         });
         
         console.log('Names rendered:', nameGrid.children.length, 'elements added');
+        console.log('First name element:', nameGrid.children[0]);
     }
 
     toggleNameSelection(name, element) {
@@ -532,7 +545,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const element = document.getElementById(id);
         if (element) {
             element.classList.add('hidden');
-            element.style.display = 'none'; // Extra safety
+            // Remove inline style to let CSS classes control visibility
+            element.style.display = '';
         }
     });
     
